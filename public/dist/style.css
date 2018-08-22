@@ -520,6 +520,12 @@ label {
     margin-bottom: 2rem;
     border-bottom: 1px solid #e6e6e6; }
 
+#lat {
+  margin-bottom: 1rem; }
+
+#lat, #lng {
+  background-color: #f3f3f3; }
+
 .search {
   position: relative;
   width: 100%;

@@ -30,3 +30,11 @@ label {
     border-bottom: 1px solid $grey;
   }
 }
+
+#lat {
+  margin-bottom: 1rem;
+}
+
+#lat, #lng {
+  background-color: lighten($grey, 5%);
+}
