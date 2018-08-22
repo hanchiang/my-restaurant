@@ -42,7 +42,16 @@ html
                 a.nav__link(href="/login", class=currentPath.startsWith('/login') ? 'nav__link--active' : '') Log In
     
     block messages
-      //- TODO: flash error messages
+      if flashes
+        .inner
+          .flash-messages
+            - const categories = Object.keys(flashes)
+            each category in categories
+              each message in flashes[category]
+                .flash(class=`flash--${category}`)
+                  p.flash__text!= message
+                  button.flash__remove(onclick='this.parentElement.remove()') &times;
+
 
     .content
       block content

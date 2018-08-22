@@ -17,11 +17,11 @@ const multerOptions = {
 }
 
 exports.getStores = (req, res) => {
+  console.log(res.locals.flashes);
   res.render('layout', { title: 'My Express App' });
 }
 
 exports.addStore = (req, res) => {
-
   res.render('storeForm', { title: 'Add Store' })
 }
 
@@ -44,14 +44,17 @@ exports.resize = async(req, res, next) => {
 exports.createStore = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array().map(error => ({message: error.msg}) )});
+    errors.array().map(error => ({ message: error.msg }))
+      .forEach(error => {
+        req.flash('error', error.message);
+      });
+    return res.redirect('/add');
   }
-
 
   const result = await db.get().collection('Stores').insertOne(req.body)
   if (result.result.ok === 1) {
     console.log(`Successfully inserted ${result.result.n} document`);
-    console.log(result.ops);
   }
+  req.flash('success', 'Successfully created store');
   res.redirect('/');
 }

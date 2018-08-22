@@ -11,21 +11,24 @@ const registerErrorEvents = (events) => {
 }
 
 exports.connect = () => {
-  return MongoClient.connect(process.env.DATABASE, { useNewUrlParser: true })
-    .then(connection => {
-      db = connection.db();
-      console.log('Connected to database 👍👍👍');
+  if (!db) {
+    return MongoClient.connect(process.env.DATABASE, { useNewUrlParser: true })
+      .then(connection => {
+        db = connection.db();
+        console.log('Connected to database 👍👍👍');
 
-      registerErrorEvents(['error', 'timeout', 'parseError']);
+        registerErrorEvents(['error', 'timeout', 'parseError']);
 
-      db.on('reconnect', (err) => {
-        console.log('Reconnected to database!')
+        db.on('reconnect', (err) => {
+          console.log('Reconnected to database!')
+        });
+      })
+      .catch(err => {
+        db = undefined;
+        console.log(`☹☹☹ ${err.message}`);
       });
-    })
-    .catch(err => {
-      db = undefined;
-      console.log(`☹☹☹ ${err.message}`);
-    });
+  }
+  return Promise.resolve();
 }
 
 exports.get = () => db;

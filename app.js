@@ -2,6 +2,9 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const flash = require('connect-flash');
 
 const routes = require('./routes/index');
 const helpers = require('./helpers');
@@ -15,13 +18,23 @@ app.set('view engine', 'pug');
 
 app.use(express.static('public'));
 
-// app.use(bodyParser.json());                         // for parsing application/json
+app.use(bodyParser.json());                         // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+app.use(session({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ url: process.env.DATABASE })
+}))
+app.use(flash());
 
 // Pass variables to templates and requests
 app.use((req, res, next) => {
   res.locals.h = helpers;
   res.locals.currentPath = req.path;
+  // flash is an object in the format { key: [message], key2: [message] }
+  res.locals.flashes = req.flash();
   next();
 })
 
