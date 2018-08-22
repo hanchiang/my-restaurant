@@ -1,3 +1,5 @@
+const db = require('./db');
+
 // Make sure we are running node 7.6+
 const [major, minor] = process.versions.node.split('.').map(parseFloat);
 if (major < 7 || (major === 7 && minor <= 5)) {
@@ -9,10 +11,17 @@ if (major < 7 || (major === 7 && minor <= 5)) {
 require('dotenv').config({ path: 'variables.env' });
 
 // READY?! Let's go!
+// db.connect();
+// console.log('After db connected!');
 
 // Start our app!
 const app = require('./app');
-const port = process.env.PORT || 7777
-const server = app.listen(port, () => {
-  console.log(`Express running → PORT ${port}`);
-});
+const port = process.env.PORT || 7777;
+
+db.connect()
+  .then(() => {
+    const server = app.listen(port, () => {
+      console.log(`Express running → PORT ${port}`);
+    });
+  });
+
