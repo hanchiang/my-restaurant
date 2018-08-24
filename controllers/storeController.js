@@ -60,7 +60,7 @@ exports.createStore = async (req, res) => {
   const stores = await db.get().collection('stores')
     .find({ slug: { $regex: new RegExp(`${slug(req.body.name)}(-\d+)?`) } })
     .toArray();
-  if (stores) {
+  if (stores.length > 0) {
     req.body.slug = slug(req.body.name) + '-' + (stores.length + 1);
   } else {
     req.body.slug = slug(req.body.name)
@@ -73,4 +73,9 @@ exports.createStore = async (req, res) => {
   }
   req.flash('success', `Successfully created ${req.body.name}. Care to leave a review?`);
   res.redirect(`/stores/${result.ops[0].slug}`);
+}
+
+exports.getStoreBySlug = async (req, res) => {
+  const store = await db.get().collection('stores').findOne({ slug: req.params.slug })
+  res.render('store', { title: store.slug, store });
 }

@@ -6,8 +6,8 @@ const storeController = require('../controllers/storeController');
 const validator = require('../utils');
 
 // Do work here
-router.get('/', storeController.getStores);
-router.get('/stores', storeController.getStores);
+router.get('/', catchErrors(storeController.getStores));
+router.get('/stores', catchErrors(storeController.getStores));
 router.post('/stores',
   storeController.upload,
   validator.validateStore,
@@ -15,6 +15,7 @@ router.post('/stores',
   catchErrors(storeController.createStore));
 
 router.get('/add', storeController.addStore);
+router.get('/stores/:slug', catchErrors(storeController.getStoreBySlug));
 
 
 module.exports = router;
