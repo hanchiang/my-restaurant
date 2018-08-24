@@ -4,6 +4,7 @@ const multer = require('multer'); // handles multipart/form-data
 const jimp = require('jimp');     // manipulate image
 const uuid = require('uuid/v4');
 const { validationResult } = require('express-validator/check');
+const slug = require('slug')
 
 const multerOptions = {
   storage: multer.memoryStorage(),
@@ -16,9 +17,10 @@ const multerOptions = {
   }
 }
 
-exports.getStores = (req, res) => {
-  console.log(res.locals.flashes);
-  res.render('layout', { title: 'My Express App' });
+exports.getStores = async (req, res) => {
+  const stores = await db.get().collection('stores').find({}).toArray();
+
+  res.render('stores', { title: 'Stores', stores });
 }
 
 exports.addStore = (req, res) => {
@@ -51,10 +53,24 @@ exports.createStore = async (req, res) => {
     return res.redirect('/add');
   }
 
-  const result = await db.get().collection('Stores').insertOne(req.body)
+  req.body.location.coordinates[0] = parseFloat(req.body.location.coordinates[0]);
+  req.body.location.coordinates[1] = parseFloat(req.body.location.coordinates[1]);
+
+  // handles the case when a slug already exist
+  const stores = await db.get().collection('stores')
+    .find({ slug: { $regex: new RegExp(`${slug(req.body.name)}(-\d+)?`) } })
+    .toArray();
+  if (stores) {
+    req.body.slug = slug(req.body.name) + '-' + (stores.length + 1);
+  } else {
+    req.body.slug = slug(req.body.name)
+  }
+  
+
+  const result = await db.get().collection('stores').insertOne(req.body);
   if (result.result.ok === 1) {
     console.log(`Successfully inserted ${result.result.n} document`);
   }
-  req.flash('success', 'Successfully created store');
-  res.redirect('/');
+  req.flash('success', `Successfully created ${req.body.name}. Care to leave a review?`);
+  res.redirect(`/stores/${result.ops[0].slug}`);
 }
