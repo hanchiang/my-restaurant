@@ -65,6 +65,11 @@ exports.createStore = async (req, res) => {
   } else {
     req.body.slug = slug(req.body.name)
   }
+
+  // Ensure that tags is an array. If only one tag is selected, it is passed as a string
+  if (!Array.isArray(req.body.tags)) {
+    req.body.tags = [req.body.tags];
+  }
   
 
   const result = await db.get().collection('stores').insertOne(req.body);
