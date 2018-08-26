@@ -10,10 +10,6 @@ if (major < 7 || (major === 7 && minor <= 5)) {
 // import environmental variables from our variables.env file
 require('dotenv').config({ path: 'variables.env' });
 
-// READY?! Let's go!
-// db.connect();
-// console.log('After db connected!');
-
 // Start our app!
 const app = require('./app');
 const port = process.env.PORT || 7777;

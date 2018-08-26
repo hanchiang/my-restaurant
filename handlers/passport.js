@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const ObjectId = require('mongodb').ObjectID;
+const { ObjectID } = require('mongodb');
 
 const db = require('../db');
 const auth = require('./auth');
@@ -10,7 +10,6 @@ passport.use(new LocalStrategy(
     usernameField: 'email'
   },
   function(username, password, done) {
-    console.log('in local strategy');
     db.get().collection('users').findOne({ email: username })
       .then(async user => {
         if (!user) {
@@ -29,13 +28,11 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser(function(user, done) {
-  console.log('in serialise user');
   done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
-  console.log('in deserialise user');
-  db.get().collection('users').findOne({ _id: ObjectId(id) })
+  db.get().collection('users').findOne({ _id: ObjectID(id) })
     .then(user => {
       done(null, user);
     })

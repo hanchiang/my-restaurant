@@ -1,10 +1,12 @@
-const db = require('../db');
-
 const multer = require('multer'); // handles multipart/form-data
 const jimp = require('jimp');     // manipulate image
 const uuid = require('uuid/v4');
 const slug = require('slug');
 const { validationResult } = require('express-validator/check');
+const md5 = require('md5');
+
+const db = require('../db');
+const { hashPassword } = require('../handlers/auth');
 
 const multerOptions = {
   storage: multer.memoryStorage(),
@@ -62,11 +64,10 @@ exports.createStore = async (req, res) => {
     req.body.slug = slug(req.body.name)
   }
 
-  // Ensure that tags is an array. If only one tag is selected, it is passed as a string
+  // Ensure that tags is an array, because if only one tag is selected, it is passed as a string
   if (!Array.isArray(req.body.tags)) {
     req.body.tags = [req.body.tags];
   }
-
 
   const result = await db.get().collection('stores').insertOne(req.body);
   req.flash('success', `Successfully created ${req.body.name}. Care to leave a review?`);
