@@ -3,8 +3,8 @@ const db = require('../db');
 const multer = require('multer'); // handles multipart/form-data
 const jimp = require('jimp');     // manipulate image
 const uuid = require('uuid/v4');
+const slug = require('slug');
 const { validationResult } = require('express-validator/check');
-const slug = require('slug')
 
 const multerOptions = {
   storage: multer.memoryStorage(),
@@ -46,13 +46,9 @@ exports.resize = async(req, res, next) => {
 exports.createStore = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    errors.array().map(error => ({ message: error.msg }))
-      .forEach(error => {
-        req.flash('error', error.message);
-      });
+    res.locals.h.setFlashErrors(req, errors);
     return res.redirect('/add');
   }
-
   req.body.location.coordinates[0] = parseFloat(req.body.location.coordinates[0]);
   req.body.location.coordinates[1] = parseFloat(req.body.location.coordinates[1]);
 
@@ -70,12 +66,9 @@ exports.createStore = async (req, res) => {
   if (!Array.isArray(req.body.tags)) {
     req.body.tags = [req.body.tags];
   }
-  
+
 
   const result = await db.get().collection('stores').insertOne(req.body);
-  if (result.result.ok === 1) {
-    console.log(`Successfully inserted ${result.result.n} document`);
-  }
   req.flash('success', `Successfully created ${req.body.name}. Care to leave a review?`);
   res.redirect(`/stores/${result.ops[0].slug}`);
 }

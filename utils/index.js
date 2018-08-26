@@ -1,5 +1,5 @@
-const { validateStore } = require('./validator');
+const validator = require('./validator');
 
 module.exports = {
-  validateStore
-};
+  validator
+}

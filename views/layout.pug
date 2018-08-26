@@ -34,7 +34,7 @@ html
                   span Logout
               li.nav__item
                 a.nav__link(href="/account", class=currentPath.startsWith('/account') ? 'nav__link--active' : '')
-                img.avatar(src=user.gravatar)
+                  img.avatar(src=user.gravatar)
             else
               li.nav__item
                 a.nav__link(href="/register", class=currentPath.startsWith('/register') ? 'nav__link--active' : '') Register

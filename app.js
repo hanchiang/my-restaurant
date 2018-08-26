@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
+const passport = require('passport');
 
 const routes = require('./routes/index');
 const helpers = require('./helpers');
@@ -29,12 +30,17 @@ app.use(session({
 }))
 app.use(flash());
 
-// Pass variables to templates and requests
+app.use(passport.initialize());
+app.use(passport.session());
+require('./handlers/passport');
+
+// Pass variables to templates and all requests
 app.use((req, res, next) => {
   res.locals.h = helpers;
   res.locals.currentPath = req.path;
   // flash is an object in the format { key: [message], key2: [message] }
   res.locals.flashes = req.flash();
+  res.locals.user = req.user || null;
   next();
 })
 
@@ -42,7 +48,8 @@ app.use((req, res, next) => {
 app.use('/', routes);
 
 app.use(errorHandlers.notFound);
-app.use(errorHandlers.flashValidationErrors);
+
+// app.use(errorHandlers.flashValidationErrors);
 
 if (process.env.NODE_ENV === 'development') {
   app.use(errorHandlers.developmentErrors);
