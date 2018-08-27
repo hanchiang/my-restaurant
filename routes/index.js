@@ -8,18 +8,28 @@ const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 const { validator } = require('../utils');
 
-// Do work here
+// Store routes
 router.get('/', catchErrors(storeController.getStores));
 router.get('/stores', catchErrors(storeController.getStores));
+
+router.get('/add', authController.isLoggedIn, storeController.addStore);
 router.post('/stores',
   storeController.upload,
   validator.validateStore,
   catchErrors(storeController.resize),
   catchErrors(storeController.createStore));
 
-router.get('/add', storeController.addStore);
 router.get('/stores/:slug', catchErrors(storeController.getStoreBySlug));
 
+router.get('/stores/:id/edit', catchErrors(storeController.editStore));
+router.post('/stores/:id',
+  storeController.upload,
+  validator.validateStore,
+  catchErrors(storeController.resize),
+  catchErrors(storeController.updateStore)
+);
+
+// Authenticate routes
 router.get('/login', userController.login);
 router.post('/login', authController.login);
 router.get('/register', userController.register);
