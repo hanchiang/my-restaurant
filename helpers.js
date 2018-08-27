@@ -28,8 +28,8 @@ exports.menu = [
   { slug: '/map', title: 'Map', icon: 'map', },
 ];
 
-exports.setFlashErrors = (req, errors) => {
-  errors.array().map(error => ({ message: error.msg }))
+exports.setValidationErrors = (req, errors) => {
+  errors.map(error => ({ message: error.msg }))
     .forEach(error => {
       req.flash('error', error.message);
     });

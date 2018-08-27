@@ -16,7 +16,7 @@ exports.register = (req, res) => {
 exports.createUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.locals.h.setFlashErrors(req, errors);
+    res.locals.h.setValidationErrors(req, errors);
     return res.redirect('/register');
   }
 
