@@ -26,11 +26,15 @@ exports.createUser = async (req, res, next) => {
     return res.redirect('/register');
   }
 
+  const now = new Date();
+  req.body.created = now;
+  req.body.updated = now;
+
   req.body.hash = await auth.hashPassword(req.body.password);
   const gravatarHash = md5(req.body.email.trim().toLowerCase());
   req.body.gravatar = `https://gravatar.com/avatar/${gravatarHash}?s=200`;
 
-  const user = _.pick(req.body, 'name', 'email', 'hash', 'gravatar');
+  const user = _.pick(req.body, 'name', 'email', 'hash', 'gravatar', 'created', 'updated');
   await db.get().collection('users').insertOne(user);
   
   next();
@@ -50,7 +54,8 @@ exports.updateAccount = async (req, res) => {
     { 
       $set: {
         name: req.body.name,
-        email: req.body.email
+        email: req.body.email,
+        updated: new Date()
       }
     }
   )
