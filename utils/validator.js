@@ -30,6 +30,14 @@ exports.validateAccount = [
   body('email').isEmail().withMessage('Please enter a valid email')
 ];
 
+exports.validatePassword = [
+  body('password').isString().isLength({ min: 6 }).withMessage('Password needs to be at least 6 characters long'),
+  body('password-confirm').custom((value, { req, location, path }) => {
+    return value === req.body.password;
+  })
+    .withMessage('Passwords do not match')
+]
+
 const setValidationErrors = (req, errors) => {
   errors.map(error => ({ message: error.msg }))
     .forEach(error => {

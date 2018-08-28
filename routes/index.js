@@ -40,10 +40,15 @@ router.post('/register',
 );
 router.get('/logout', authController.logout);
 
+// Account routes
 router.get('/account', userController.account);
 router.post('/account',
   validator.validateAccount,
   catchErrors(userController.updateAccount)
+);
+router.post('/account/password', 
+  validator.validatePassword,
+  userController.updatePassword
 );
 
 

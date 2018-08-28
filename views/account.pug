@@ -9,3 +9,10 @@ block content
       label(for="email") Email
       input(type="email" name="email" value=user.email)
       input.button(type="submit" value="Update My Account")
+    
+    form(action="/account/password" method="POST")
+      label(for="password") Password
+      input(type="password" name="password")
+      label(for="password") Confirm Password
+      input(type="password" name="password-confirm")
+      input.button(type="submit" value="Change Password")

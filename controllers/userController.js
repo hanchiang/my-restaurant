@@ -5,6 +5,7 @@ const md5 = require('md5');
 const db = require('../db');
 const auth = require('../handlers/auth');
 const { validator } = require('../utils');
+const { hashPassword } = require('../handlers/auth');
 
 exports.login = (req, res) => {
   res.render('login', { title: 'Login' });
@@ -44,7 +45,7 @@ exports.updateAccount = async (req, res) => {
     return res.redirect('/account');
   }
 
-  const user = await db.get().collection('users').findOneAndUpdate(
+  await db.get().collection('users').findOneAndUpdate(
     { _id: req.user._id },
     { 
       $set: {
@@ -54,5 +55,22 @@ exports.updateAccount = async (req, res) => {
     }
   )
   req.flash('success', 'Successfully update profile!')
+  res.redirect('/account');
+};
+
+exports.updatePassword = async (req, res) => {
+  if (validator.handleValidationError(req)) {
+    return res.redirect('/account');
+  }
+
+  const hash = await hashPassword(req.body.password);
+
+  await db.get().collection('users').findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: { hash }
+    }
+  );
+
+  req.flash('success', 'Successfully changed password!');
   res.redirect('/account');
 }
