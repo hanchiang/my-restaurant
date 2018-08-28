@@ -27,10 +27,3 @@ exports.menu = [
   { slug: '/add', title: 'Add', icon: 'add', },
   { slug: '/map', title: 'Map', icon: 'map', },
 ];
-
-exports.setValidationErrors = (req, errors) => {
-  errors.map(error => ({ message: error.msg }))
-    .forEach(error => {
-      req.flash('error', error.message);
-    });
-}

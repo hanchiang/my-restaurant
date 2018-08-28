@@ -2,11 +2,11 @@ const multer = require('multer'); // handles multipart/form-data
 const jimp = require('jimp');     // manipulate image
 const uuid = require('uuid/v4');
 const slug = require('slug');
-const { validationResult } = require('express-validator/check');
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
 
 const db = require('../db');
+const { validator } = require('../utils');
 
 const multerOptions = {
   storage: multer.memoryStorage(),
@@ -14,8 +14,7 @@ const multerOptions = {
     if (file.mimetype.startsWith('image/')) {
       next(null, true);
     } else {
-      // next({ message: 'That filetype is not allowed' }, false);
-      // Override default behaviour with flash error
+      // Override default behaviour of passing error to next() with flash error
       req.fileError = true;
       next(null, false);
     }
@@ -49,16 +48,16 @@ exports.resize = async(req, res, next) => {
 }
 
 exports.createStore = async (req, res) => {
-  const errors = validationResult(req);
+  let isError = false;
 
-  if (!errors.isEmpty()) {
-    if (req.fileError) {
-      res.locals.h.setValidationErrors(req, errors.array().concat({ msg: 'That file type is not allowed' }));
-    } else {
-      res.locals.h.setValidationErrors(req, errors.array());
-    }
-    return res.redirect('/add');
+  // Handle file error separately
+  if (req.fileError) {
+    req.flash('error', 'That file type is not allowed');
+    isError = true;
   }
+
+  isError = validator.handleValidationError(req);
+  if (isError) return res.redirect('/add');
 
   req.body.location.coordinates[0] = parseFloat(req.body.location.coordinates[0]);
   req.body.location.coordinates[1] = parseFloat(req.body.location.coordinates[1]);
@@ -123,7 +122,6 @@ exports.updateStore = async (req, res) => {
     { returnNewDocument: true }
   );
 
-  console.log(store);
   req.flash('success', `Successfully updated store! Check it out <strong><a href='/stores/${store.slug}'>here</a></strong> `);
   res.redirect('back');
 }
