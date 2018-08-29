@@ -29,6 +29,9 @@ router.post('/stores/:id',
   catchErrors(storeController.updateStore)
 );
 
+router.get('/tags', catchErrors(storeController.getStoresByTags));
+router.get('/tags/:tag', catchErrors(storeController.getStoresByTags));
+
 // Authenticate routes
 router.get('/login', userController.login);
 router.post('/login', authController.login);

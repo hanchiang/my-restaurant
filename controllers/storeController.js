@@ -3,7 +3,6 @@ const jimp = require('jimp');     // manipulate image
 const uuid = require('uuid/v4');
 const slug = require('slug');
 const { ObjectID } = require('mongodb');
-const _ = require('lodash');
 
 const db = require('../db');
 const { validator } = require('../utils');
@@ -22,10 +21,9 @@ const multerOptions = {
 }
 
 exports.getStores = async (req, res) => {
-  const stores = await db.get().collection('stores').find({}).toArray()
-  const sortedStores = _.orderBy(stores, ['created'], ['desc']);
+  const stores = await db.get().collection('stores').find({}).sort({ _id: -1 }).toArray();
 
-  res.render('stores', { title: 'Stores', stores: sortedStores });
+  res.render('stores', { title: 'Stores', stores });
 }
 
 exports.addStore = (req, res) => {
@@ -125,3 +123,35 @@ exports.updateStore = async (req, res) => {
   req.flash('success', `Successfully updated store! Check it out <strong><a href='/stores/${store.slug}'>here</a></strong> `);
   res.redirect('back');
 }
+
+exports.getStoresByTags = async (req, res) => {
+  // Unwind stores on tags, and get the count of each tag 
+  const tag = req.params.tag;
+  const tagQuery = tag ? { tags: tag } : { tags: { $exists: true } };
+
+  const tagsPromise = db.get().collection('stores')
+    .aggregate([
+      { 
+        $unwind: { path: '$tags' } 
+      },
+      {
+        $group: 
+        { 
+          _id: '$tags', 
+          count: { $sum: 1 } 
+        }
+      },
+      {
+        $sort: { count: -1 }
+      }
+    ])
+    .toArray();
+  
+  
+  
+  const storesPromise = db.get().collection('stores').find(tagQuery).toArray();
+  const [tags, stores] = await Promise.all([tagsPromise, storesPromise]);
+  console.log(tags);
+  console.log(stores);
+  res.render('tags', { title: 'Tags', tag, tags, stores });
+};
