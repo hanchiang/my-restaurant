@@ -32,6 +32,8 @@ router.post('/stores/:id',
 router.get('/tags', catchErrors(storeController.getStoresByTags));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTags));
 
+router.get('/map', storeController.map);
+
 // Authenticate routes
 router.get('/login', userController.login);
 router.post('/login', authController.login);
@@ -54,7 +56,8 @@ router.post('/account/password',
   userController.updatePassword
 );
 
-
+// API
+router.get('/api/stores/near', catchErrors(storeController.mapStores));
 
 
 module.exports = router;

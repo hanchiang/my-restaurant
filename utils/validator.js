@@ -7,7 +7,7 @@ exports.validateStore = [
   sanitizeBody('name').escape(),
   body('description').isString().exists({ checkFalsy: true }).withMessage('Please enter store description'),
   sanitizeBody('description').escape(),
-  body('location.address').exists({ checkFalsy: true }).withMessage('Please enter store address'),
+  body('address').exists({ checkFalsy: true }).withMessage('Please enter store address'),
   body('location.coordinates').custom(([lng, lat], { req, location, path }) => {
     return (typeof lat === 'string' && typeof lng === 'string' && lat !== '' && lng !== '');
   }).withMessage('Latitude and longitude must be supplied')

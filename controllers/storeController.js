@@ -57,8 +57,10 @@ exports.createStore = async (req, res) => {
   isError = validator.handleValidationError(req);
   if (isError) return res.redirect('/add');
 
+  // Create a 2dsphere
   req.body.location.coordinates[0] = parseFloat(req.body.location.coordinates[0]);
   req.body.location.coordinates[1] = parseFloat(req.body.location.coordinates[1]);
+  req.body.location.type = 'Point';
 
   // handles the case when a slug already exist
   const stores = await db.get().collection('stores')
@@ -148,10 +150,33 @@ exports.getStoresByTags = async (req, res) => {
     .toArray();
   
   
-  
   const storesPromise = db.get().collection('stores').find(tagQuery).toArray();
   const [tags, stores] = await Promise.all([tagsPromise, storesPromise]);
   console.log(tags);
   console.log(stores);
   res.render('tags', { title: 'Tags', tag, tags, stores });
+};
+
+exports.map = (req, res) => {
+  res.render('map', { title: 'Map' });
+}
+
+// API
+exports.mapStores = async (req, res) => {
+  const { lat, lng } = req.query;
+  const coordinates = [lng, lat].map(coord => parseFloat(coord));
+  console.log(coordinates);
+
+  const stores = await db.get().collection('stores').find({
+    location: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates
+        },
+        $maxDistance: 25000
+      }
+    }
+  })
+  .toArray();
 };
