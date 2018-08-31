@@ -165,7 +165,6 @@ exports.map = (req, res) => {
 exports.mapStores = async (req, res) => {
   const { lat, lng } = req.query;
   const coordinates = [lng, lat].map(coord => parseFloat(coord));
-  console.log(coordinates);
 
   const stores = await db.get().collection('stores').find({
     location: {
@@ -179,4 +178,5 @@ exports.mapStores = async (req, res) => {
     }
   })
   .toArray();
+  res.json(stores);
 };
