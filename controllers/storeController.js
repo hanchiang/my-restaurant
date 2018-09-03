@@ -72,10 +72,10 @@ exports.createStore = async (req, res) => {
     req.body.slug = slug(req.body.name);
   }
 
-  // Ensure that tags is an array, because if only one tag is selected, it is passed as a string
+  // Ensure that tags is an array, because if only one tag is selected, it is a string
   if (req.body.tags && !Array.isArray(req.body.tags)) {
     req.body.tags = [req.body.tags];
-  }
+  } 
 
   const now = new Date();
   req.body.created = now;

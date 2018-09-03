@@ -7,8 +7,9 @@ exports.stores = [
     slug: 'Great-beer',
     tags: ['Wifi', 'Open late'],
     photo: 'd88efbbe-b2f8-49d3-9682-61dbdb680fec.jpeg',
+    address: 'Brisbane City QLD, Australia',
     location: {
-      address: 'Brisbane City QLD, Australia',
+      type: 'Point',
       coordinates: [153.02512350000006, -27.4697707]
     }
   },
@@ -16,8 +17,9 @@ exports.stores = [
     name: 'Chill tapas bar',
     description: 'Wind down after work!',
     slug: 'Chill-tapas-bar',
+    address: 'Brisbane Airport QLD, Australia',
     location: {
-      address: 'Brisbane Airport QLD, Australia',
+      type: 'Point',
       coordinates: [153.11533899999995, -27.394131]
     }
   }

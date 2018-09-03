@@ -1,16 +1,23 @@
-
 require('dotenv').config({ path: 'variables.env.test' });
 
-const makeServer = async () => {
-  const app = require('../app');
-  const db = require('../db');
-  const port = process.env.PORT || 7777;
+const app = require('../app');
+const db = require('../db');
 
-  await db.connect()
-  const server = app.listen(port, () => {
-    // console.log(`Express running → PORT ${port}`);
-  });
-  return server;
+
+const makeServer = () => {
+  return new Promise((resolve, reject) => {
+    const port = process.env.PORT || 7777;
+
+    db.connect()
+      .then((s) => {
+        const server = app.listen(port, () => {
+          resolve(server);
+        });
+      })
+      .catch(err => {
+        reject(err);
+      })
+  })
 }
 
 module.exports = makeServer;

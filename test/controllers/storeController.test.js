@@ -5,9 +5,30 @@ const db = require('../../db');
 const makeServer = require('../factory');
 const { stores, users } = require('../data');
 
-let server;
+let server, cookie;
 
-describe('Store controller test', () => {
+describe.only('Store controller test', () => {
+  // Log in to get cookie, and send it with every request
+  before((done) => {
+    makeServer()
+      .then(s => {
+        server = s;
+
+        request(server)
+          .post('/login')
+          .send({ email: 'han@han.com', password: '123456' })
+          .expect(302)
+          .end((err, res) => {
+            if (err) return done(err);
+            cookie = res.headers['set-cookie'];
+
+            server.close(() => {
+              done();
+            })
+          })
+      })
+  })
+
   beforeEach((done) => {
     makeServer()
       .then(s => {
@@ -34,9 +55,11 @@ describe('Store controller test', () => {
   const store = {
     name: 'My first store',
     description: 'This is my first store',
+    slug: 'My-first-store',
     tags: ['Vegetarian'],
+    address: 'Brisbane Road, Labrador QLD, Australia',
     location: {
-      address: 'Brisbane Road, Labrador QLD, Australia',
+      type: 'Point',
       coordinates: ['153.39388640000004', '-27.9354513']
     }
   };
@@ -45,6 +68,7 @@ describe('Store controller test', () => {
   it('Should create store successfully', (done) => {
     request(server).post('/stores')
       .send(store)
+      .set('cookie', cookie)
       .expect(302)
       .expect('location', `/stores/My-first-store`)
       .end((err, res) => {
@@ -62,6 +86,7 @@ describe('Store controller test', () => {
   it('Should create store with same name without duplicating slug', (done) => {
     request(server).post('/stores')
       .send({ ...store, name: 'Great beer' })
+      .set('cookie', cookie)
       .expect(302)
       .expect('location', `/stores/Great-beer-2`)
       .end((err, res) => {
@@ -127,7 +152,7 @@ describe('Store controller test', () => {
 
     it('Should not create store without location address', (done) => {
       request(server).post('/stores')
-        .send({ ...store, location: { ...store.location, address: '' } })
+        .send({ ...store, address: '' })
         .expect(302)
         .expect('location', '/add')
         .end((err, res) => {
