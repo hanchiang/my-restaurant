@@ -5,6 +5,10 @@ function loadPlaces(map, userLat, userLng) {
     .then(res => {
       const stores = res.data;
 
+      if (stores.length === 0) {
+        return alert('No stores found');
+      }
+
       // Show markers on map
       const markers = stores.map(store => {
         const marker = new google.maps.Marker({
@@ -49,23 +53,44 @@ function loadPlaces(map, userLat, userLng) {
     });
 }
 
-function makeMap(input) {
-  if (!input) return;
+function makeMap(inputMap) {
+  if (!inputMap) return;
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       const { latitude: userLat, longitude: userLng, accuracy } = pos.coords;
 
       // Display map
-      const map = new google.maps.Map(input, {
+      const map = new google.maps.Map(inputMap, {
         center: { lat: userLat, lng: userLng },
         zoom: 10
       });
-
       loadPlaces(map, userLat, userLng);
+
+      const input = document.querySelector('.autocomplete__input[name="geolocate"]');
+      const autocomplete = new google.maps.places.Autocomplete(input);
+
+      // Create a circle to get latlng bounds
+      const circle = new google.maps.Circle({
+        center: { lat: userLat, lng: userLng },
+        radius: accuracy
+      });
+
+      // Set bounds of autocomplete so that search results will be biased towards user's location
+      autocomplete.setBounds(circle.getBounds());
+
+      autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+        loadPlaces(map, lat, lng);
+      });
 
     }, (err) => {
       console.log(err);
+      if (err.message === 'User denied Geolocation') {
+        alert('Location permission is required');
+      }
     })
   }
 }

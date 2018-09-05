@@ -30,9 +30,9 @@ app.use(session({
 }))
 app.use(flash());
 
+require('./handlers/passport');
 app.use(passport.initialize());
 app.use(passport.session());
-require('./handlers/passport');
 
 // Pass variables to templates and all requests
 app.use((req, res, next) => {
