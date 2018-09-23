@@ -9,3 +9,9 @@ block content
       label(for="password") Password
       input(type="password" name="password")
       input.button(type="submit" value="Log in ➡")
+    
+    form.form(action="/account/forgot" method="POST")
+      h2 I forgot my password!
+      label(for="email") Email
+      input(type="email" name="email")
+      input.button(type="submit" value="Send a reset")

@@ -35,7 +35,14 @@ router.get('/tags/:tag', catchErrors(storeController.getStoresByTags));
 router.get('/map', storeController.map);
 
 // Authenticate routes
-router.get('/login', userController.login);
+router.get('/login',
+  (req, res, next) => {
+    if (req.user) {
+      return res.redirect('/');
+    }
+    next();
+  },
+  userController.login);
 router.post('/login', authController.login);
 router.get('/register', userController.register);
 router.post('/register',
@@ -44,6 +51,13 @@ router.post('/register',
   authController.login
 );
 router.get('/logout', authController.logout);
+
+router.post('/account/forgot', catchErrors(authController.forgotPassword));
+router.get('/account/reset/:token', userController.resetPassword);
+router.post('/account/reset/:token', 
+  validator.validatePassword,
+  authController.updatePassword
+);
 
 // Account routes
 router.get('/account', userController.account);

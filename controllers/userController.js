@@ -79,3 +79,7 @@ exports.updatePassword = async (req, res) => {
   req.flash('success', 'Successfully changed password!');
   res.redirect('/account');
 }
+
+exports.resetPassword = (req, res) => {
+  res.render('reset', { title: 'Reset Password' })
+}

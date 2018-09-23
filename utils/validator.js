@@ -2,6 +2,16 @@ const { body } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 const { validationResult } = require('express-validator/check');
 
+
+const validators = {
+  'password': body('password').isString().isLength({ min: 6 }).withMessage('Password needs to be at least 6 characters long'),
+  'password-confirm': body('password-confirm').custom((value, { req, location, path }) => {
+    return value === req.body.password;
+  }).withMessage('Passwords do not match'),
+  'email': body('email').isEmail().withMessage('Please enter a valid email')
+}
+
+// validator middlewares for various functions such as creating a store, registering a user, changing password
 exports.validateStore = [
   body('name').isString().exists({ checkFalsy: true }).withMessage('Please enter store name'),
   sanitizeBody('name').escape(),
@@ -16,26 +26,20 @@ exports.validateStore = [
 exports.validateRegister = [
   body('name').isString().exists({ checkFalsy: true }).withMessage('Please enter user name'),
   sanitizeBody('name').escape(),
-  body('email').isEmail().withMessage('Please enter a valid email'),
-  body('password').isString().isLength({ min: 6 }).withMessage('Password needs to be at least 6 characters long'),
-  body('password-confirm').custom((value, { req, location, path }) => {
-    return value === req.body.password;
-  })
-    .withMessage('Passwords do not match')
+  validators.email,
+  validators.password,
+  validators['password-confirm']
 ];
 
 exports.validateAccount = [
   body('name').isString().exists({ checkFalsy: true }).withMessage('Please enter user name'),
   sanitizeBody('name').escape(),
-  body('email').isEmail().withMessage('Please enter a valid email')
+  validators.email
 ];
 
 exports.validatePassword = [
-  body('password').isString().isLength({ min: 6 }).withMessage('Password needs to be at least 6 characters long'),
-  body('password-confirm').custom((value, { req, location, path }) => {
-    return value === req.body.password;
-  })
-    .withMessage('Passwords do not match')
+  validators.password,
+  validators['password-confirm']
 ]
 
 const setValidationErrors = (req, errors) => {

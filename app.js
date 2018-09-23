@@ -10,7 +10,6 @@ const passport = require('passport');
 const routes = require('./routes/index');
 const helpers = require('./helpers');
 const errorHandlers = require('./handlers/errorHandlers');
-const db = require('./db');
 
 // create our Express app
 const app = express();
