@@ -120,7 +120,7 @@ exports.updateStore = async (req, res) => {
     description: req.body.description,
     location: {
       coordinates,
-      type: "Point"
+      type: 'Point'
     },
     address: req.body.address,
     updated: new Date()
@@ -198,3 +198,23 @@ exports.mapStores = async (req, res) => {
   .toArray();
   res.json(stores);
 };
+
+exports.searchStores = async (req, res) => {
+  const { query } = req.query;
+
+  const stores = await db.get().collection('stores').find(
+    { $text: {
+      $search: query
+    }},
+    {
+      projection: {
+        score: { $meta: 'textScore' }
+      },
+      sort: { 
+        score: { $meta: 'textScore' } 
+      }
+    }
+  )
+  .toArray();
+  res.json(stores);
+}

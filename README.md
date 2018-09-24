@@ -1,6 +1,18 @@
 ## Introduction
 This project is a food reviewer website that allows user register an account and add stores that they have come across, leave reviews.
 
+## Features
+* Register an account
+* Add a store
+* Search for stores by text
+* Search for stores using google map
+* Filter stores by tag
+
+### TBD
+* Heart a store, and able to view hearted stores
+* Top 10 stores with the highest average ratings
+* pagination
+
 ## Technologies
 Framework: Express  
 Database: MongoDB  

@@ -72,6 +72,7 @@ router.post('/account/password',
 
 // API
 router.get('/api/stores/near', catchErrors(storeController.mapStores));
+router.get('/api/stores/search', catchErrors(storeController.searchStores));
 
 
 module.exports = router;
