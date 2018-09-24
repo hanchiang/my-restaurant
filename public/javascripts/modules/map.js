@@ -4,6 +4,10 @@ function loadPlaces(map, userLat, userLng) {
   axios.get(`/api/stores/near?lat=${userLat}&lng=${userLng}`)
     .then(res => {
       const stores = res.data;
+      
+      if (stores.length === 0) {
+        return alert('Oops! No places found');
+      }
 
       if (stores.length === 0) {
         return alert('No stores found');
@@ -47,6 +51,10 @@ function loadPlaces(map, userLat, userLng) {
       })
 
       map.fitBounds(bounds);
+      // because google map zoom in too close if only one marker is displayed
+      if (map.getZoom() > 15) {
+        map.setZoom(15);
+      }
     })
     .catch(err => {
       console.log(err);
