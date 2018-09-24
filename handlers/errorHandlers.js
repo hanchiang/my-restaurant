@@ -54,7 +54,7 @@ exports.developmentErrors = (err, req, res, next) => {
   res.format({
     // Based on the `Accept` http header
     'text/html': () => {
-      res.render('error', errorDetails);
+      res.render('error', errorDetails, { title: 'Error' });
     }, // Form Submit, Reload the page
     'application/json': () => res.json(errorDetails) // Ajax call, send JSON back
   });
@@ -70,6 +70,7 @@ exports.productionErrors = (err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    error: {},
+    title: 'Error'
   });
 };

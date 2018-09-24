@@ -54,10 +54,11 @@ exports.createStore = async (req, res) => {
     isError = true;
   }
 
-  isError = validator.handleValidationError(req);
+  isError = isError || validator.handleValidationError(req);
   if (isError) return res.redirect('/add');
 
   // Create a 2dsphere
+  // Impt: input coordinates is a string!
   req.body.location.coordinates[0] = parseFloat(req.body.location.coordinates[0]);
   req.body.location.coordinates[1] = parseFloat(req.body.location.coordinates[1]);
   req.body.location.type = 'Point';
@@ -100,20 +101,39 @@ exports.editStore = async (req, res) => {
 }
 
 exports.updateStore = async (req, res) => {
+  let isError = false;
+
+  // Handle file error separately
+  if (req.fileError) {
+    req.flash('error', 'That file type is not allowed');
+    isError = true;
+  }
+
+  isError = isError || validator.handleValidationError(req);
+  if (isError) return res.redirect('back');
+
+  // Impt: input coordinates is a string!
+  const coordinates = req.body.location.coordinates.map(parseFloat);
+
   const toUpdate = {
     name: req.body.name,
     description: req.body.description,
-    location: req.body.location,
+    location: {
+      coordinates,
+      type: "Point"
+    },
+    address: req.body.address,
     updated: new Date()
   };
   const toDelete = { somethingThatDontExist: '' };
 
-  // If user upload new photo, update it. Do not delete photo if there no photo uploaded?
+
+  // If user upload new photo, update it.
   if (req.body.photo) toUpdate.photo = req.body.photo;
   if (req.body.tags) toUpdate.tags = req.body.tags;
   else toDelete.tags = '';
 
-  const store = await db.get().collection('stores').findOneAndUpdate(
+  const { value: store } = await db.get().collection('stores').findOneAndUpdate(
     { _id: ObjectID(req.params.id) },
     { 
       $set: toUpdate,

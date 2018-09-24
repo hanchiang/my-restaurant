@@ -7,11 +7,13 @@ Database: MongoDB
 Authentication: PassportJS  
 
 ### Other Libraries
-* Moment(date time)
-* Pug(templating)
-* Jimp(image manipulation)
-* Express-session(to work with PassportJS)
-* Connect-flash(flash messages)
+* Moment (date time)
+* Pug (templating)
+* Jimp (image manipulation)
+* Express-session (to work with PassportJS)
+* Connect-flash (flash messages)
+* nodemailer (Send email)
+* brcypt (generating secure hash from password)
 
 ## Currently Work in progress
 Stay tuned!

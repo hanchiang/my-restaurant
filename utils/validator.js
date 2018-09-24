@@ -14,9 +14,9 @@ const validators = {
 // validator middlewares for various functions such as creating a store, registering a user, changing password
 exports.validateStore = [
   body('name').isString().exists({ checkFalsy: true }).withMessage('Please enter store name'),
-  sanitizeBody('name').escape(),
+  sanitizeBody('name'),
   body('description').isString().exists({ checkFalsy: true }).withMessage('Please enter store description'),
-  sanitizeBody('description').escape(),
+  sanitizeBody('description'),
   body('address').exists({ checkFalsy: true }).withMessage('Please enter store address'),
   body('location.coordinates').custom(([lng, lat], { req, location, path }) => {
     return (typeof lat === 'string' && typeof lng === 'string' && lat !== '' && lng !== '');
@@ -25,7 +25,7 @@ exports.validateStore = [
 
 exports.validateRegister = [
   body('name').isString().exists({ checkFalsy: true }).withMessage('Please enter user name'),
-  sanitizeBody('name').escape(),
+  sanitizeBody('name'),
   validators.email,
   validators.password,
   validators['password-confirm']
@@ -33,7 +33,7 @@ exports.validateRegister = [
 
 exports.validateAccount = [
   body('name').isString().exists({ checkFalsy: true }).withMessage('Please enter user name'),
-  sanitizeBody('name').escape(),
+  sanitizeBody('name'),
   validators.email
 ];
 
