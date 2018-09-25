@@ -34,7 +34,9 @@ exports.createUser = async (req, res, next) => {
   const gravatarHash = md5(req.body.email.trim().toLowerCase());
   req.body.gravatar = `https://gravatar.com/avatar/${gravatarHash}?s=200`;
 
-  const user = _.pick(req.body, 'name', 'email', 'hash', 'gravatar', 'created', 'updated');
+  req.body.hearts = [];
+
+  const user = _.pick(req.body, 'name', 'email', 'hash', 'gravatar', 'created', 'updated', 'hearts');
   await db.get().collection('users').insertOne(user);
   
   next();

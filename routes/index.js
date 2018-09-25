@@ -33,6 +33,7 @@ router.get('/tags', catchErrors(storeController.getStoresByTags));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTags));
 
 router.get('/map', storeController.map);
+router.get('/hearts', catchErrors(storeController.heartedStores));
 
 // Authenticate routes
 router.get('/login',
@@ -73,6 +74,6 @@ router.post('/account/password',
 // API
 router.get('/api/stores/near', catchErrors(storeController.mapStores));
 router.get('/api/stores/search', catchErrors(storeController.searchStores));
-
+router.post('/api/stores/:id/heart', catchErrors(storeController.heartStore));
 
 module.exports = router;

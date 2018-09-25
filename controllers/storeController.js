@@ -179,6 +179,30 @@ exports.map = (req, res) => {
   res.render('map', { title: 'Map' });
 }
 
+exports.heartedStores = async (req, res) => {
+  const { stores } = await db.get().collection('users').aggregate([
+    { $match: { _id: req.user._id } },
+    { $unwind: { path: '$hearts' } },
+    {
+      $lookup: {
+        from: 'stores',
+        localField: 'hearts',
+        foreignField: '_id',
+        as: 'store'
+      }
+    },
+    { $project: { store: 1 } },
+    { $unwind: { path: '$store' } },
+    { $group: {
+      _id: '_id',
+      stores: { $push: '$store' }
+    } }
+  ])
+  .next();
+
+  res.render('stores', { title: 'Hearted Stores', stores })
+}
+
 // API
 exports.mapStores = async (req, res) => {
   const { lat, lng } = req.query;
@@ -217,4 +241,19 @@ exports.searchStores = async (req, res) => {
   )
   .toArray();
   res.json(stores);
+}
+
+exports.heartStore = async (req, res) => {
+  const { id } = req.params;
+  const updateOperator = req.user.hearts.indexOf(id) === -1 ? '$push' : '$pull';
+
+  const { value: updatedUser } = await db.get().collection('users').findOneAndUpdate(
+    { _id: req.user._id },
+    { [updateOperator]: {
+      hearts: ObjectID(id)
+    }},
+    { returnOriginal: false }
+  )
+
+  res.json(updatedUser);
 }
