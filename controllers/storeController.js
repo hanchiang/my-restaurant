@@ -92,6 +92,26 @@ exports.createStore = async (req, res) => {
 
 exports.getStoreBySlug = async (req, res) => {
   const store = await db.get().collection('stores').findOne({ slug: req.params.slug })
+
+  const reviews = await db.get().collection('reviews').aggregate([
+    { $match: { store: store._id } },
+    { $lookup: {
+      from: 'users',
+      localField: 'author',
+      foreignField: '_id',
+      as: 'author'
+    } },
+    { $project: {
+      'author.hash': 0,
+      'author.created': 0,
+      'author.updated': 0,
+      'author.hearts': 0
+    } },
+    { $unwind: '$author' }
+  ]).toArray();
+
+  store.reviews = reviews;
+
   res.render('store', { title: store.slug, store });
 }
 

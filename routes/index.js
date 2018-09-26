@@ -6,6 +6,7 @@ const { catchErrors } = require('../handlers/errorHandlers');
 const storeController = require('../controllers/storeController');
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
+const reviewController = require('../controllers/reviewController');
 const { validator } = require('../utils');
 
 // Store routes
@@ -70,6 +71,12 @@ router.post('/account/password',
   validator.validatePassword,
   userController.updatePassword
 );
+
+// Review routes
+router.post('/reviews/:id',
+  authController.isLoggedIn,
+  reviewController.addReview
+)
 
 // API
 router.get('/api/stores/near', catchErrors(storeController.mapStores));
