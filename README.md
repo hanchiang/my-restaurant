@@ -14,6 +14,9 @@ This project is a food reviewer website that allows user register an account and
 ### TBD
 * pagination
 
+## Demo
+[check it out!](https://han-restaurant.herokuapp.com/)
+
 ## Technologies
 Framework: Express  
 Database: MongoDB  
