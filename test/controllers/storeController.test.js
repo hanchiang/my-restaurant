@@ -7,7 +7,7 @@ const { stores, users } = require('../data');
 
 let server, cookie;
 
-describe.only('Store controller test', () => {
+describe('Store controller test', () => {
   // Log in to get cookie, and send it with every request
   before((done) => {
     makeServer()

@@ -9,9 +9,9 @@ This project is a food reviewer website that allows user register an account and
 * Filter stores by tag
 * Heart a store, and able to view hearted stores
 * Write a review for stores
+* Top 10 stores with the highest average ratings
 
 ### TBD
-* Top 10 stores with the highest average ratings
 * pagination
 
 ## Technologies

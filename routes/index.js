@@ -35,6 +35,7 @@ router.get('/tags/:tag', catchErrors(storeController.getStoresByTags));
 
 router.get('/map', storeController.map);
 router.get('/hearts', catchErrors(storeController.heartedStores));
+router.get('/top', catchErrors(storeController.topStores));
 
 // Authenticate routes
 router.get('/login',

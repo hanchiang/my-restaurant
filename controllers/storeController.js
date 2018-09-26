@@ -229,7 +229,49 @@ exports.heartedStores = async (req, res) => {
   ])
   .next();
 
+  console.log(stores);
+
   res.render('stores', { title: 'Hearted Stores', stores })
+}
+
+exports.topStores = async (req, res) => {
+  const stores = await db.get().collection('stores').aggregate([
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: '_id',
+        foreignField: 'store',
+        as: 'reviews'
+      }
+    },
+    { $project: {
+      'name': 1,
+      'photo': 1,
+      'reviews.rating': 1,
+      'slug': 1
+    } },
+    {
+      $unwind: '$reviews'
+    },
+    { $group: {
+      _id: '$_id',
+      name: { $first: '$name' },
+      photo: { $first: '$photo' },
+      slug: { $first: '$slug' },
+      averageRating: { $avg: '$reviews.rating' },
+      reviews: { $sum: 1 }
+    } },
+    { $match: {
+      reviews: { $gte: 2 }
+    } },
+    { $sort: {
+      averageRating: -1
+    } },
+    { $limit: 5 }
+  ])
+  .toArray();
+
+  res.render('topStores', { title: 'Top Stores', stores });
 }
 
 // API
