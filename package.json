@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">= 7.6.0"
+    "node": "8.12.0"
   },
   "scripts": {
     "prod": "node ./start.js",
     "watch": "nodemon ./start.js --ignore public/",
-    "start": "concurrently \"npm run watch\" \"npm run assets\" --names \"💻,📦\" --prefix name",
+    "dev": "concurrently \"npm run watch\" \"npm run assets\" --names \"💻,📦\" --prefix name",
+    "start": "node start.js",
+    "heroku-postbuild": "webpack -p --config webpack.config.js",
     "assets": "webpack -w --display-max-modules 0",
     "sample": "node ./data/load-sample-data.js",
     "blowitallaway": "node ./data/load-sample-data.js --delete",
