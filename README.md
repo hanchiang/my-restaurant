@@ -7,10 +7,10 @@ This project is a food reviewer website that allows user register an account and
 * Search for stores by text
 * Search for stores using google map
 * Filter stores by tag
-* * Heart a store, and able to view hearted stores
+* Heart a store, and able to view hearted stores
+* Write a review for stores
 
 ### TBD
-* Write a review for stores
 * Top 10 stores with the highest average ratings
 * pagination
 

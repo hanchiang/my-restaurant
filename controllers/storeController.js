@@ -21,7 +21,16 @@ const multerOptions = {
 }
 
 exports.getStores = async (req, res) => {
-  const stores = await db.get().collection('stores').find({}).sort({ _id: -1 }).toArray();
+  const stores = await db.get().collection('stores').aggregate([
+    { $lookup: {
+      from: 'reviews',
+      localField: '_id',
+      foreignField: 'store',
+      as: 'reviews'
+    } },
+    { $sort: { created: -1 } }
+  ])
+  .toArray();
 
   res.render('stores', { title: 'Stores', stores });
 }
