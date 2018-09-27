@@ -10,9 +10,7 @@ This project is a food reviewer website that allows user register an account and
 * Heart a store, and able to view hearted stores
 * Write a review for stores
 * Top 10 stores with the highest average ratings
-
-### TBD
-* pagination
+* stores pagination
 
 ## Demo
 [check it out!](https://han-restaurant.herokuapp.com/)
