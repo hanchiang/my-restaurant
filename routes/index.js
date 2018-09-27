@@ -12,6 +12,7 @@ const { validator } = require('../utils');
 // Store routes
 router.get('/', catchErrors(storeController.getStores));
 router.get('/stores', catchErrors(storeController.getStores));
+router.get('/stores/page/:page', catchErrors(storeController.getStores));
 
 router.get('/add', authController.isLoggedIn, storeController.addStore);
 router.post('/stores',
@@ -35,6 +36,7 @@ router.get('/tags/:tag', catchErrors(storeController.getStoresByTags));
 
 router.get('/map', storeController.map);
 router.get('/hearts', catchErrors(storeController.heartedStores));
+router.get('/hearts/page/:page', catchErrors(storeController.heartedStores));
 router.get('/top', catchErrors(storeController.topStores));
 
 // Authenticate routes

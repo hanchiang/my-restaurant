@@ -21,18 +21,25 @@ const multerOptions = {
 }
 
 exports.getStores = async (req, res) => {
+  const page = req.params.page || 1;
+  const numPerPage = 4;
+  const numStores = await db.get().collection('stores').countDocuments({});
+  const numPages = Math.ceil(numStores / numPerPage);
+
   const stores = await db.get().collection('stores').aggregate([
+    { $sort: { created: -1 } },
+    { $skip: (page - 1) * numPerPage },
+    { $limit: numPerPage },
     { $lookup: {
       from: 'reviews',
       localField: '_id',
       foreignField: 'store',
       as: 'reviews'
-    } },
-    { $sort: { created: -1 } }
+    } }
   ])
   .toArray();
 
-  res.render('stores', { title: 'Stores', stores });
+  res.render('stores', { title: 'Stores', stores, page, numPages, numStores });
 }
 
 exports.addStore = (req, res) => {
@@ -209,7 +216,10 @@ exports.map = (req, res) => {
 }
 
 exports.heartedStores = async (req, res) => {
-  const { stores } = await db.get().collection('users').aggregate([
+  const page = req.params.page || 1;
+  const numPerPage = 4;
+
+  const result = await db.get().collection('users').aggregate([
     { $match: { _id: req.user._id } },
     { $unwind: { path: '$hearts' } },
     {
@@ -220,18 +230,27 @@ exports.heartedStores = async (req, res) => {
         as: 'store'
       }
     },
-    { $project: { store: 1 } },
+    { $project: 
+      { store: 1 }
+    },
     { $unwind: { path: '$store' } },
+    { $sort: { 'store.created': -1 } },
     { $group: {
       _id: '_id',
-      stores: { $push: '$store' }
+      stores: { $push: '$store' },
+      count: { $sum: 1 }
+    } },
+    { $project: {
+      stores: { $slice: ['$stores', (page - 1) * numPerPage, numPerPage] },
+      count: 1
     } }
   ])
   .next();
 
-  console.log(stores);
+  const { stores, count: numStores } = result;
+  const numPages = Math.ceil(numStores / numPerPage);
 
-  res.render('stores', { title: 'Hearted Stores', stores })
+  res.render('stores', { title: 'Hearted Stores', stores, page, numPages, numStores })
 }
 
 exports.topStores = async (req, res) => {

@@ -1,0 +1,11 @@
+mixin pagination(page, numPages, numStores)
+  .pagination
+    - const route = currentPath.split('/')[1];
+    if page > 1
+      .pagination__prev
+        a(href=`/${route}/page/${page-1}`) Prev
+    .pagination__text
+      p Page #{page} of #{numPages}, #{numStores} results
+    if page < numPages
+      .pagination__next
+        a(href=`/${route}/page/${parseInt(page)+1}`) Next

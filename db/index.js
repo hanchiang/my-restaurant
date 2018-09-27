@@ -1,11 +1,12 @@
 const MongoClient = require('mongodb').MongoClient;
+const logger = require('../utils/logger');
 
 let db;
 
 const registerErrorEvents = (events) => {
   events.forEach(event => {
     db.on(event, (err) => {
-      console.log(`⚠⚠⚠ ${err.message}`);
+      logger.error({err});
     })
   })
 }
@@ -15,17 +16,17 @@ exports.connect = () => {
     return MongoClient.connect(process.env.DATABASE, { useNewUrlParser: true })
       .then(connection => {
         db = connection.db();
-        console.log('Connected to database 👍👍👍');
+        logger.info('Connected to database!');
 
         registerErrorEvents(['error', 'timeout', 'parseError']);
 
         db.on('reconnect', (err) => {
-          console.log('Reconnected to database!')
+          logger.info('Reconnected to database!');
         });
       })
       .catch(err => {
         db = undefined;
-        console.log(`☹☹☹ ${err.message}`);
+        logger.error({ err });
       });
   }
   return Promise.resolve();
