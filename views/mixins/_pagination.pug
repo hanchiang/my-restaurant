@@ -1,6 +1,6 @@
 mixin pagination(page, numPages, numStores)
   .pagination
-    - const route = currentPath.split('/')[1];
+    - const route = currentPath.split('/')[1] || 'stores';
     if page > 1
       .pagination__prev
         a(href=`/${route}/page/${page-1}`) Prev
