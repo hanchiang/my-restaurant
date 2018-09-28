@@ -32,6 +32,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
+  // IMPT: id is a string!
   db.get().collection('users').findOne({ _id: ObjectID(id) })
     .then(user => {
       done(null, user);

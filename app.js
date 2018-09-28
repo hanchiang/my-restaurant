@@ -6,6 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const passport = require('passport');
+const helmet = require('helmet');
 
 const routes = require('./routes/index');
 const helpers = require('./helpers');
@@ -14,8 +15,10 @@ const errorHandlers = require('./handlers/errorHandlers');
 // create our Express app
 const app = express();
 
+
 app.set('view engine', 'pug');
 
+app.use(helmet());
 app.use(express.static('public'));
 
 app.use(bodyParser.json());                         // for parsing application/json
