@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const passport = require('passport');
 const helmet = require('helmet');
@@ -28,7 +28,7 @@ app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ url: process.env.DATABASE })
+  store: new MongoStore({ mongoUrl: process.env.DATABASE })
 }))
 app.use(flash());
 
